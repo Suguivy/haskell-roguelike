@@ -1,3 +1,12 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module Player where
 
-newtype Player = Player (Int, Int)
+import Lens.Micro.TH (makeLenses)
+
+data Player = Player
+  { _x :: Int
+  , _y :: Int
+  }
+
+makeLenses ''Player
