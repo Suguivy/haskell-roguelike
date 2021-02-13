@@ -27,4 +27,6 @@ executable roguelike
   build-depends:       base >= 4.7 && < 5,
                        vty,
                        matrix,
-                       unordered-containers
+                       unordered-containers,
+                       microlens-th,
+                       microlens
