@@ -2,7 +2,6 @@
 
 module Game where
 
-import System.Random
 import Lens.Micro.TH
 import Lens.Micro
 
@@ -18,8 +17,8 @@ data Game = Game
 
 makeLenses ''Game
 
-newGame :: (RandomGen r) => r -> Game
-newGame gen = Game (makeDungeon gen 30 10) (Player (0,0))
+newGame :: Game
+newGame = Game (makeDungeon 30 10) (Player (0,0))
 
 runAction :: Action -> Game -> Maybe Game
 runAction (Walk N) game = Just $ game & player . pos . _2 -~ 1

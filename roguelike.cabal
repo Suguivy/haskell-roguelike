@@ -29,5 +29,4 @@ executable roguelike
                        matrix,
                        unordered-containers,
                        microlens-th,
-                       microlens,
-                       random
+                       microlens

@@ -17,6 +17,6 @@ dungeonToImg :: Dungeon -> Image
 dungeonToImg = vertCat . map (string defAttr . concatMap show) . dungeonToLists
 
 playerToImg :: Player -> Image
-playerToImg p = (translateX px . translateY py $ char defAttr '@')
+playerToImg p = translateX px . translateY py $ char defAttr '@'
   where px = p ^. pos . _1
         py = p ^. pos . _2
