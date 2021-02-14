@@ -1,6 +1,7 @@
 module Main where
 
 import Graphics.Vty
+import System.Random
 
 import Game
 import Rendering
@@ -10,7 +11,8 @@ main :: IO ()
 main = do
     cfg <- standardIOConfig
     vty <- mkVty cfg
-    loop vty newGame
+    gen <- getStdGen
+    loop vty $ newGame gen
     shutdown vty
     where loop vty game = do
             update vty $ renderGame game

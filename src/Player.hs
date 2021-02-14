@@ -5,8 +5,7 @@ module Player where
 import Lens.Micro.TH (makeLenses)
 
 data Player = Player
-  { _x :: Int
-  , _y :: Int
+  { _pos :: (Int, Int)
   }
 
 makeLenses ''Player

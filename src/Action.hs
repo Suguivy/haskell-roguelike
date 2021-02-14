@@ -12,11 +12,15 @@ data Action = Walk Direction
 
 bindings :: [(Event, Action)]
 bindings =
-  [ (EvKey KUp         [], Walk N)
-  , (EvKey KDown       [], Walk S)
-  , (EvKey KLeft       [], Walk W)
-  , (EvKey KRight      [], Walk E)
-  , (EvKey (KChar 'q') [], ExitGame)
+  [ (EvKey (KChar 'k')  [], Walk N)
+  , (EvKey (KChar 'j')  [], Walk S)
+  , (EvKey (KChar 'h')  [], Walk W)
+  , (EvKey (KChar 'l')  [], Walk E)
+  , (EvKey (KChar 'y')  [], Walk NW)
+  , (EvKey (KChar 'u')  [], Walk NE)
+  , (EvKey (KChar 'b')  [], Walk SW)
+  , (EvKey (KChar 'n')  [], Walk SE)
+  , (EvKey (KChar 'q')  [], ExitGame)
   ]
 
 eventToAction :: Event -> Action
