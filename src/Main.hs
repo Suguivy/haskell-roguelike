@@ -10,7 +10,8 @@ main :: IO ()
 main = do
     cfg <- standardIOConfig
     vty <- mkVty cfg
-    loop vty newGame
+    game <- newGame
+    loop vty game
     shutdown vty
     where loop vty game = do
             update vty $ renderGame game

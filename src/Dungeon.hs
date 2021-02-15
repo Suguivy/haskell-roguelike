@@ -1,20 +1,32 @@
 module Dungeon where
 
-import Data.Matrix
+import Data.Matrix hiding ((<|>))
+import Data.Tuple
+import Data.Maybe
+import Control.Applicative ((<|>))
 
-data Cell = Solid | Empty
+data Cell = Solid
+  | Empty
+  deriving (Eq)
 
 instance Show Cell where
-  show Solid = "#"
-  show Empty = "."
+  show cell = [fromJust (lookup cell cellChars <|> Just '?')]
+
+cellChars :: [(Cell, Char)]
+cellChars =
+  [ (Empty, '.')
+  , (Solid, '#')
+  ]
 
 newtype Dungeon = Dungeon (Matrix Cell)
 
 instance Show Dungeon where
   show (Dungeon m) = unlines . map (concatMap show) $ toLists m
 
-makeDungeon :: Int -> Int -> Dungeon
-makeDungeon w h = Dungeon $ matrix h w $ const Empty
+makeDungeonFromFile :: String -> IO Dungeon
+makeDungeonFromFile f = do
+  contents <- readFile f
+  return $ Dungeon $ fromLists $ map (fromJust . (`lookup` map swap cellChars)) <$> lines contents
 
 dungeonToLists :: Dungeon -> [[Cell]]
 dungeonToLists (Dungeon m) = toLists m

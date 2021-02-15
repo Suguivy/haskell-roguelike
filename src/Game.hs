@@ -17,8 +17,10 @@ data Game = Game
 
 makeLenses ''Game
 
-newGame :: Game
-newGame = Game (makeDungeon 30 10) (Player (0,0))
+newGame :: IO Game
+newGame = do
+  dun <- makeDungeonFromFile "maps/test.map"
+  return $ Game dun (Player (0,0))
 
 runAction :: Action -> Game -> Maybe Game
 runAction (Walk N) game = Just $ game & player . pos . _2 -~ 1
