@@ -3,7 +3,6 @@
 module Action where
 
 import Graphics.Vty.Input
-import Control.Applicative
 import Data.Maybe
 import Linear.V2
 
@@ -25,4 +24,4 @@ bindings =
   ]
 
 eventToAction :: Event -> Action
-eventToAction e = fromJust $ lookup e bindings <|> Just None
+eventToAction e = fromMaybe None (lookup e bindings)
