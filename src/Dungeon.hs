@@ -1,13 +1,14 @@
 module Dungeon where
 
 import Data.Matrix hiding ((<|>))
+import Linear.V2
 import Data.Tuple
 import Data.Maybe
 import Control.Applicative ((<|>))
 
 data Cell = Solid
-  | Empty
-  deriving (Eq)
+          | Empty
+          deriving (Eq)
 
 instance Show Cell where
   show cell = [fromJust (lookup cell cellChars <|> Just '?')]
@@ -30,3 +31,6 @@ makeDungeonFromFile f = do
 
 dungeonToLists :: Dungeon -> [[Cell]]
 dungeonToLists (Dungeon m) = toLists m
+
+getCell :: V2 Int -> Dungeon -> Cell
+getCell (V2 x y) (Dungeon m) = fromMaybe Solid (safeGet (y+1) (x+1) m)
