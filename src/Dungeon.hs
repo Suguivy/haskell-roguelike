@@ -1,20 +1,19 @@
 module Dungeon where
 
-import Data.Matrix hiding ((<|>))
+import Data.Matrix
 import Linear.V2
 import Data.Tuple
 import Data.Maybe
-import Control.Applicative ((<|>))
 
 data Cell = Solid
           | Empty
           deriving (Eq)
 
 instance Show Cell where
-  show cell = [fromJust (lookup cell cellChars <|> Just '?')]
+  show cell = [fromMaybe '?' (lookup cell cellMapping)]
 
-cellChars :: [(Cell, Char)]
-cellChars =
+cellMapping :: [(Cell, Char)]
+cellMapping =
   [ (Empty, '.')
   , (Solid, '#')
   ]
@@ -27,7 +26,10 @@ instance Show Dungeon where
 makeDungeonFromFile :: String -> IO Dungeon
 makeDungeonFromFile f = do
   contents <- readFile f
-  return $ Dungeon $ fromLists $ map (fromJust . (`lookup` map swap cellChars)) <$> lines contents
+  let cellMappingR = map swap cellMapping
+      charToCell c = fromMaybe (error "Invalid cell in the .map file") (c `lookup` cellMappingR)
+      cellLists = map charToCell <$> lines contents
+  return . Dungeon . fromLists $ cellLists
 
 dungeonToLists :: Dungeon -> [[Cell]]
 dungeonToLists (Dungeon m) = toLists m
