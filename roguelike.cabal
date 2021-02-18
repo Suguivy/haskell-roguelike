@@ -18,8 +18,7 @@ executable roguelike
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
-  other-modules:       Direction,
-                       Dungeon,
+  other-modules:       Dungeon,
                        Player,
                        Game,
                        Rendering,
