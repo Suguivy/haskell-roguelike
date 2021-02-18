@@ -20,12 +20,12 @@ makeLenses ''Game
 newGame :: IO Game
 newGame = do
   dun <- makeDungeonFromFile "maps/test.map"
-  return $ Game dun (Player $ V2 1 1)
+  return $ Game dun (Player $ V2 1 24)
 
 runAction :: Action -> Game -> Maybe Game
-runAction (Move vec) game =
-  if ableToMove then Just $ game & player . pos .~ newPos
-                else Just game
+runAction (Move vec) game = Just $ if ableToMove
+                                   then game & player . pos .~ newPos
+                                   else game
   where ableToMove = getCell newPos (game ^. dungeon) == Empty
         newPos = (game ^. player . pos) + vec
 runAction None g = Just g
