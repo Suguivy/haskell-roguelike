@@ -1,9 +1,10 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, NegativeLiterals #-}
 
 module Game where
 
 import Lens.Micro.TH
 import Lens.Micro
+import Linear.V2
 
 import Dungeon
 import Player
@@ -20,16 +21,16 @@ makeLenses ''Game
 newGame :: IO Game
 newGame = do
   dun <- makeDungeonFromFile "maps/test.map"
-  return $ Game dun (Player (0,0))
+  return $ Game dun (Player $ V2 0 0)
 
 runAction :: Action -> Game -> Maybe Game
-runAction (Walk N) game = Just $ game & player . pos . _2 -~ 1
-runAction (Walk S) game = Just $ game & player . pos . _2 +~ 1
-runAction (Walk W) game = Just $ game & player . pos . _1 -~ 1
-runAction (Walk E) game = Just $ game & player . pos . _1 +~ 1
-runAction (Walk NW) game = Just $ game & player . pos . both -~ 1
-runAction (Walk NE) game = Just $ game & player . pos %~ (\(x,y) -> (x+1, y-1))
-runAction (Walk SW) game = Just $ game & player . pos %~ (\(x,y) -> (x-1, y+1))
-runAction (Walk SE) game = Just $ game & player . pos . both +~ 1
+runAction (Walk N) game = Just $ game & player . pos +~ V2 0 -1
+runAction (Walk S) game = Just $ game & player . pos +~ V2 0 1
+runAction (Walk W) game = Just $ game & player . pos +~ V2 -1 0
+runAction (Walk E) game = Just $ game & player . pos +~ V2 1 0
+runAction (Walk NW) game = Just $ game & player . pos +~ V2 -1 -1
+runAction (Walk NE) game = Just $ game & player . pos +~ V2 1 -1
+runAction (Walk SW) game = Just $ game & player . pos +~ V2 -1 1
+runAction (Walk SE) game = Just $ game & player . pos +~ V2 1 1
 runAction None g = Just g
 runAction ExitGame _ = Nothing

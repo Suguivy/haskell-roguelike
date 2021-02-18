@@ -3,9 +3,10 @@
 module Player where
 
 import Lens.Micro.TH (makeLenses)
+import Linear.V2
 
 data Player = Player
-  { _pos :: (Int, Int)
+  { _pos :: V2 Int
   }
 
 makeLenses ''Player
