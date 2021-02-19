@@ -2,11 +2,11 @@
 module Dungeon where
 
 import Data.Aeson
-import Data.Aeson.Types
 import Data.Matrix
 import Linear.V2
 import Data.Tuple
 import Data.Maybe
+import Data.Either
 
 data Cell = Solid
           | Empty
@@ -26,19 +26,19 @@ newtype Dungeon = Dungeon (Matrix Cell)
 instance Show Dungeon where
   show (Dungeon m) = unlines . map (concatMap show) $ toLists m
 
-makeDungeonFromFile :: String -> IO Dungeon
+instance FromJSON Dungeon where
+  parseJSON = withObject "Dungeon" $ \v -> do
+    stringMap <- v .: "map"
+    let cellMappingR = map swap cellMapping
+        charToCell c = fromMaybe (error "Invalid cell in the .map file") (c `lookup` cellMappingR)
+        cellLists = map charToCell <$> stringMap
+    return . Dungeon . fromLists $ cellLists
+
+
+makeDungeonFromFile :: FilePath -> IO Dungeon
 makeDungeonFromFile f = do
-  --contents <- readFile f
-  ef <- eitherDecodeFileStrict f :: IO (Either String Object)
-  let obj = case ef of (Right o) -> o
-                       (Left l) -> error l
-  let stringMap = case parse (.: "map") obj :: Result [String] of
-        (Success m) -> m
-        (Error s) -> error s
-  let cellMappingR = map swap cellMapping
-      charToCell c = fromMaybe (error "Invalid cell in the .map file") (c `lookup` cellMappingR)
-      cellLists = map charToCell <$> stringMap
-  return . Dungeon . fromLists $ cellLists
+  eithDun <- eitherDecodeFileStrict f
+  return $ fromRight (error "") eithDun
 
 dungeonToLists :: Dungeon -> [[Cell]]
 dungeonToLists (Dungeon m) = toLists m
