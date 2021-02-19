@@ -19,7 +19,7 @@ makeLenses ''Game
 
 newGame :: IO Game
 newGame = do
-  dun <- makeDungeonFromFile "maps/test.map"
+  dun <- makeDungeonFromFile "maps/test.json"
   return $ Game dun (Player $ V2 1 24)
 
 runAction :: Action -> Game -> Maybe Game

@@ -29,4 +29,7 @@ executable roguelike
                        unordered-containers,
                        microlens-th,
                        microlens,
-                       linear
+                       linear,
+                       aeson,
+                       bytestring,
+                       utf8-string

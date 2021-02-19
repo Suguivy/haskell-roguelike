@@ -1,5 +1,8 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Dungeon where
 
+import Data.Aeson
+import Data.Aeson.Types
 import Data.Matrix
 import Linear.V2
 import Data.Tuple
@@ -25,10 +28,16 @@ instance Show Dungeon where
 
 makeDungeonFromFile :: String -> IO Dungeon
 makeDungeonFromFile f = do
-  contents <- readFile f
+  --contents <- readFile f
+  ef <- eitherDecodeFileStrict f :: IO (Either String Object)
+  let obj = case ef of (Right o) -> o
+                       (Left l) -> error l
+  let stringMap = case parse (.: "map") obj :: Result [String] of
+        (Success m) -> m
+        (Error s) -> error s
   let cellMappingR = map swap cellMapping
       charToCell c = fromMaybe (error "Invalid cell in the .map file") (c `lookup` cellMappingR)
-      cellLists = map charToCell <$> lines contents
+      cellLists = map charToCell <$> stringMap
   return . Dungeon . fromLists $ cellLists
 
 dungeonToLists :: Dungeon -> [[Cell]]
