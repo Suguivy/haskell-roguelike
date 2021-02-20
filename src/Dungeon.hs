@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Dungeon where
 
 import Data.Aeson
@@ -6,7 +7,6 @@ import Data.Matrix
 import Linear.V2
 import Data.Tuple
 import Data.Maybe
-import Data.Either
 
 data Cell = Solid
           | Empty
@@ -38,7 +38,9 @@ instance FromJSON Dungeon where
 makeDungeonFromFile :: FilePath -> IO Dungeon
 makeDungeonFromFile f = do
   eithDun <- eitherDecodeFileStrict f
-  return $ fromRight (error "") eithDun
+  return $ case eithDun of
+    Left err -> error err
+    Right dun -> dun
 
 dungeonToLists :: Dungeon -> [[Cell]]
 dungeonToLists (Dungeon m) = toLists m
