@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, TemplateHaskell #-}
 
 module Dungeon where
 
@@ -7,6 +7,8 @@ import Data.Matrix
 import Linear.V2
 import Data.Tuple
 import Data.Maybe
+import Lens.Micro.TH
+import Lens.Micro
 
 data Cell = Solid
           | Empty
@@ -21,18 +23,24 @@ cellMapping =
   , (Solid, '#')
   ]
 
-newtype Dungeon = Dungeon (Matrix Cell)
+data Dungeon = Dungeon
+  { _name   :: String
+  , _layout :: Matrix Cell
+  }
+
+makeLenses ''Dungeon
 
 instance Show Dungeon where
-  show (Dungeon m) = unlines . map (concatMap show) $ toLists m
+  show dun = unlines . map (concatMap show) $ toLists $ dun ^. layout
 
 instance FromJSON Dungeon where
   parseJSON = withObject "Dungeon" $ \v -> do
-    stringMap <- v .: "map"
+    mapName <- v .: "name"
+    stringMap <- v .: "layout"
     let cellMappingR = map swap cellMapping
         charToCell c = fromMaybe (error "Invalid cell in the .map file") (c `lookup` cellMappingR)
         cellLists = map charToCell <$> stringMap
-    return . Dungeon . fromLists $ cellLists
+    return $ Dungeon mapName (fromLists cellLists)
 
 
 makeDungeonFromFile :: FilePath -> IO Dungeon
@@ -43,7 +51,7 @@ makeDungeonFromFile f = do
     Right dun -> dun
 
 dungeonToLists :: Dungeon -> [[Cell]]
-dungeonToLists (Dungeon m) = toLists m
+dungeonToLists dun = toLists $ dun ^. layout
 
 getCell :: V2 Int -> Dungeon -> Cell
-getCell (V2 x y) (Dungeon m) = fromMaybe Solid (safeGet (y+1) (x+1) m)
+getCell (V2 x y) dun = fromMaybe Solid (safeGet (y+1) (x+1) $ dun ^. layout)
